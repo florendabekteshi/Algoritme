@@ -1,0 +1,101 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SingingEasy
+{
+    class SingingEasy
+    {
+        static void Main(string[] args)
+        {
+            SingingEasy prgObj = new SingingEasy();
+            List<int> vector = new List<int>();
+        a: Console.Write("Please type the number of elements you want in a pitch ?");
+            int n = Convert.ToInt32(Console.ReadLine());
+            if ((n > 0) && (n <= 2000))
+            {
+                for (int i = 0; i < n; i++)
+                {
+                b: Console.Write("Enter the number: ");
+                    int m = Convert.ToInt32(Console.ReadLine());
+                    if (m < 1 || m > 1000000)
+                    {
+                        Console.WriteLine("Value should be between 1 and 1,000,000, inclusive\n");
+                        Console.Write("Wolud you like to start entering the number from the beginning if yes prej 0 if no 1\n");
+                        int k = Convert.ToInt32(Console.ReadLine());
+                        if (k == 0)
+                        {
+                            goto a;
+                        }
+                        else
+                        {
+
+                            goto b;
+                        }
+                    }
+                    else
+                    {
+                        vector.Add(m);
+                    }
+                }
+                Console.WriteLine("The smallest possible difficulty of singing the given song: {0}", prgObj.solve(vector));
+
+            }
+            else
+            {
+                Console.WriteLine("The elements in pitches should be between 1 and 2,000, inclusive");
+                goto a;
+
+            }
+            Console.ReadKey();
+        }
+
+        const long LL = 1000000;
+        const long N = 2000;
+        long[,] dp = new long[N, N];
+        long[] x = new long[N];
+
+        public int solve(List<int> pitch)
+        {
+            int n = pitch.Count;
+            for (int i = 0; i < n; i++)
+            {
+                x[i + 1] = pitch[i];
+            }
+            for (int i = 0; i <= n; i++)
+            {
+                for (int j = 0; j <= n; j++)
+                {
+                    dp[i, j] = LL;
+                }
+            }
+            dp[1, 0] = 0;
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+
+                    if (j == 0)
+                    {
+
+                        dp[i + 1, 0] = Math.Min(dp[i + 1, 0], dp[i, 0] + Math.Abs(x[i + 1] - x[i]));
+                        dp[i + 1, i] = Math.Min(dp[i + 1, i], dp[i, 0]);
+                    }
+                    else
+                    {
+                        dp[i + 1, i] = Math.Min(dp[i + 1, i], dp[i, j] + Math.Abs(x[i + 1] - x[j]));
+                        dp[i + 1, j] = Math.Min(dp[i + 1, j], dp[i, j] + Math.Abs(x[i + 1] - x[i]));
+                    }
+                }
+            }
+            long ans = LL;
+            for (int i = 0; i < n; ++i)
+            {
+                ans = Math.Min(ans, dp[n, i]);
+            }
+            return (int)ans;
+        }
+    }
+}
